@@ -48,6 +48,8 @@ npm run lint
 
 ## Test
 
+In order to run the tests, you need to create a file called '.env.test'
+
 ```
 npm run test
 ```

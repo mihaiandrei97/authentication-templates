@@ -3,6 +3,7 @@ import request from 'supertest'
 import app from '../app'
 
 describe('app', () => {
+  console.log('aici', process.env.DATABASE_URL, process.env.NODE_ENV)
   it('responds with a not found message', (done) => {
     request(app)
       .get('/what-is-this-even')

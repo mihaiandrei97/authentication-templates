@@ -73,3 +73,8 @@ typings/
 .serverless
 
 dist
+
+dev.db
+test.db
+test.db-journal
+dev.db-journal

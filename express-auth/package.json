@@ -8,7 +8,8 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "lint": "eslint --fix src",
-    "test": "jest"
+    "pretest": "dotenv -e .env.test -- prisma migrate reset --force",
+    "test": "npm run pretest && dotenv -e .env.test jest"
   },
   "keywords": [],
   "author": "CJ R. <cj@null.computer> (https://w3cj.now.sh)",
