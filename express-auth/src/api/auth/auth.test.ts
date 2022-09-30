@@ -2,11 +2,46 @@ import request from 'supertest'
 import app from '../../app'
 
 describe('POST /api/v1/auth/register', () => {
-  it('responds with an access_token and refresh_token', async () => {
+  it('responds with an error if payload is missing', async () => {
+    const response = await request(app)
+      .post('/api/v1/auth/register')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
 
+    expect(response.statusCode).toBe(400)
+  })
+
+  it('responds with an error if payload email is missing ', async () => {
     const payload = {
-      email: "mihai@mihai.com",
-      password: "Test1@123"
+      password: 'Test1@123',
+    }
+
+    const response = await request(app)
+      .post('/api/v1/auth/register')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send(payload)
+
+    expect(response.statusCode).toBe(400)
+  })
+
+  it('responds with an error if password is missing ', async () => {
+    const payload = {
+      email: 'mihai@mihai.com',
+    }
+    const response = await request(app)
+      .post('/api/v1/auth/register')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send(payload)
+
+    expect(response.statusCode).toBe(400)
+  })
+
+  it('responds with an access_token and refresh_token', async () => {
+    const payload = {
+      email: 'mihai@mihai.com',
+      password: 'Test1@123',
     }
 
     const response = await request(app)

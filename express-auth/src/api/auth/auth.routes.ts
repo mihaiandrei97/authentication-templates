@@ -1,10 +1,14 @@
-import { Router } from 'express';
-import * as AuthControllers from './auth.controllers';
+import { Router } from 'express'
+import { validateRequest } from '../../middlewares'
+import * as AuthControllers from './auth.controllers'
+import { registerSchema } from './auth.schema'
 
-const router = Router();
+const router = Router()
 
+router.post(
+  '/register',
+  validateRequest({ body: registerSchema }),
+  AuthControllers.register
+)
 
-router.post('/register', AuthControllers.register);
-
-
-export default router;
+export default router
