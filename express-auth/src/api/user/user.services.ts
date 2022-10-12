@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import { db } from '../../db'
-import { User } from '@prisma/client'
+import type { User, Prisma } from '@prisma/client'
 
 export function findUserByEmail(email: string) {
   return db.user.findUnique({
@@ -10,7 +10,7 @@ export function findUserByEmail(email: string) {
   })
 }
 
-export function createUserByEmailAndPassword(user: User) {
+export function createUserByEmailAndPassword(user: Prisma.UserCreateInput) {
   user.password = bcrypt.hashSync(user.password, 12)
   return db.user.create({
     data: user,

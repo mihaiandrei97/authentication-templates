@@ -56,4 +56,23 @@ describe('POST /api/v1/auth/register', () => {
     expect(response.body.access_token).toEqual(expect.any(String))
     expect(response.body.refresh_token).toEqual(expect.any(String))
   })
+
+  it('responds with an access_token and refresh_token in cookie', async () => {
+    const payload = {
+      email: 'mihai2@mihai2.com',
+      password: 'Test1@123',
+    }
+
+    const response = await request(app)
+      .post('/api/v1/auth/register?refreshTokenInCookie=true')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send(payload)
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body).toHaveProperty('access_token')
+    expect(Array.isArray(response.headers['set-cookie']))
+    expect(response.headers['set-cookie'][0]).toContain('refresh_token')
+    expect(response.body.access_token).toEqual(expect.any(String))
+  })
 })
