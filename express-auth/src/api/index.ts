@@ -1,6 +1,7 @@
 import express from 'express'
 import MessageResponse from '../interfaces/MessageResponse'
-import auth from './auth/auth.routes'
+import authRoutes from './auth/auth.routes'
+import userRoutes from './user/user.routes'
 const router = express.Router()
 
 router.get<{}, MessageResponse>('/', (req, res) => {
@@ -9,6 +10,7 @@ router.get<{}, MessageResponse>('/', (req, res) => {
   })
 })
 
-router.use('/auth', auth)
+router.use('/auth', authRoutes)
+router.use('/user', userRoutes)
 
 export default router

@@ -7,7 +7,7 @@ import {
   registerQuerySchema,
   registerSchema,
   refreshTokenSchema,
-} from './auth.schema'
+} from './auth.schemas'
 
 const router = Router()
 

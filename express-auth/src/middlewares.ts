@@ -3,7 +3,9 @@ import { ZodError } from 'zod'
 
 import ErrorResponse from './interfaces/ErrorResponse'
 import RequestValidators from './interfaces/RequestValidators'
+import { ParsedToken } from '../typings/token'
 import { config } from './utils/config'
+import { verifyAccessToken } from './utils/jwt'
 
 export function notFound(req: Request, res: Response, next: NextFunction) {
   res.status(404)
@@ -45,5 +47,42 @@ export function validateRequest(validators: RequestValidators) {
       }
       next(error)
     }
+  }
+}
+
+export function deserializeUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const accessToken = (req.headers.authorization || '').replace(
+      /^Bearer\s/,
+      ''
+    )
+    if (!accessToken) {
+      return next()
+    }
+    const payload = verifyAccessToken(accessToken) as ParsedToken
+    req.user = payload
+
+    next()
+  } catch (error) {
+    next()
+  }
+}
+
+export function requireUser(req: Request, res: Response, next: NextFunction) {
+  try {
+    const user = req.user
+
+    if (!user) {
+      res.status(401)
+      throw new Error('Unauthorized.')
+    }
+
+    next()
+  } catch (error) {
+    next(error)
   }
 }

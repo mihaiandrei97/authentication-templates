@@ -14,7 +14,7 @@ import {
   RefreshInput,
   RegisterInput,
   RegisterQuerySchema,
-} from './auth.schema'
+} from './auth.schemas'
 import {
   addRefreshTokenToWhitelist,
   deleteRefreshToken,

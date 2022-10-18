@@ -50,3 +50,11 @@ export function verifyRefreshToken(token: string) {
     throw error
   }
 }
+
+export function verifyAccessToken(token: string) {
+  try {
+    return jwt.verify(token, config.jwt_access_secret)
+  } catch (error) {
+    throw error
+  }
+}
