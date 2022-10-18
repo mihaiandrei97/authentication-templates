@@ -1,10 +1,11 @@
 import * as jwt from 'jsonwebtoken'
 import { User } from '@prisma/client'
+import { config } from './config'
 
 // Usually I keep the token between 5 minutes - 15 minutes
 export function generateAccessToken(user: User) {
-  return jwt.sign({ userId: user.id }, process.env.JWT_ACCESS_SECRET!, {
-    expiresIn: process.env.JWT_ACCESS_LIFETIME!,
+  return jwt.sign({ userId: user.id }, config.jwt_access_secret, {
+    expiresIn: config.jwt_access_lifetime,
   })
 }
 
@@ -18,9 +19,9 @@ export function generateRefreshToken(user: User, jti: string) {
       userId: user.id,
       jti,
     },
-    process.env.JWT_REFRESH_SECRET!,
+    config.jwt_refresh_secret,
     {
-      expiresIn: process.env.JWT_REFRESH_LIFETIME,
+      expiresIn: config.jwt_refresh_lifetime,
     }
   )
 }

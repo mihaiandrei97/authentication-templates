@@ -3,6 +3,7 @@ import { ZodError } from 'zod'
 
 import ErrorResponse from './interfaces/ErrorResponse'
 import RequestValidators from './interfaces/RequestValidators'
+import { config } from './utils/config'
 
 export function notFound(req: Request, res: Response, next: NextFunction) {
   res.status(404)
@@ -21,7 +22,7 @@ export function errorHandler(
   res.status(statusCode)
   res.json({
     message: err.message,
-    stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
+    stack: config.environment === 'production' ? '🥞' : err.stack,
   })
 }
 

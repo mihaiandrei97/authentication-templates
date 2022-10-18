@@ -1,8 +1,8 @@
 import app from './app'
+import { config } from './utils/config'
 
-const port = process.env.PORT || 5000
-app.listen(port, () => {
+app.listen(config.port, () => {
   /* eslint-disable no-console */
-  console.log(`Listening: http://localhost:${port}`)
+  console.log(`Listening: http://localhost:${config.port}`)
   /* eslint-enable no-console */
 })
