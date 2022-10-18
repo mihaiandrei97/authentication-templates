@@ -169,7 +169,10 @@ export async function refreshTokens(
       })
     }
   } catch (error) {
-    if (error instanceof Error && error.name === 'TokenExpiredError') {
+    if (
+      error instanceof Error &&
+      (error.name === 'TokenExpiredError' || error.name === 'JsonWebTokenError')
+    ) {
       res.status(401)
     }
     next(error)

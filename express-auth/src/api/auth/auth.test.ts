@@ -210,6 +210,7 @@ describe('POST /api/v1/auth/refreshToken', () => {
 
   let expiredRefreshToken = ''
   let validRefreshToken = ''
+  let refreshTokenNotPresentInDb = ''
 
   beforeAll(async () => {
     const user = await db.user.create({
@@ -223,6 +224,7 @@ describe('POST /api/v1/auth/refreshToken', () => {
 
     const jti = cuid()
     validRefreshToken = generateRefreshToken(user, jti, '5m')
+    refreshTokenNotPresentInDb = generateRefreshToken(user, cuid(), '5m')
 
     await db.refreshToken.create({
       data: {
@@ -288,6 +290,29 @@ describe('POST /api/v1/auth/refreshToken', () => {
     expect(response.body).toHaveProperty('message')
     expect(response.body.message).toBe('jwt expired')
   })
+  it('responds with Unauthorized if token is not present in db ( body case ) ', async () => {
+    const response = await request(app)
+      .post('/api/v1/auth/refreshToken')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send({ refresh_token: '1231231a' })
+
+    expect(response.statusCode).toBe(401)
+    expect(response.body).toHaveProperty('message')
+    expect(response.body.message).toBe('jwt malformed')
+  })
+
+  it('responds with Unauthorized if token is not present in db ( cookie case ) ', async () => {
+    const response = await request(app)
+      .post('/api/v1/auth/refreshToken')
+      .set('Accept', 'application/json')
+      .set('Cookie', [`refresh_token=${refreshTokenNotPresentInDb}`])
+      .expect('Content-Type', /json/)
+
+    expect(response.statusCode).toBe(401)
+    expect(response.body).toHaveProperty('message')
+    expect(response.body.message).toBe('Unauthorized')
+  })
 
   it('responds with an access_token and refresh_token ( body case )', async () => {
     const response = await request(app)
@@ -316,5 +341,19 @@ describe('POST /api/v1/auth/refreshToken', () => {
     expect(response.body).toHaveProperty('refresh_token')
     expect(response.body.access_token).toEqual(expect.any(String))
     expect(response.body.refresh_token).toEqual(expect.any(String))
+    validRefreshToken = response.body.refresh_token
+  })
+  it('responds with an access_token and refresh_token in cookie', async () => {
+    const response = await request(app)
+      .post('/api/v1/auth/refreshToken?refreshTokenInCookie=true')
+      .set('Accept', 'application/json')
+      .set('Cookie', [`refresh_token=${validRefreshToken}`])
+      .expect('Content-Type', /json/)
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body).toHaveProperty('access_token')
+    expect(Array.isArray(response.headers['set-cookie']))
+    expect(response.headers['set-cookie'][0]).toContain('refresh_token')
+    expect(response.body.access_token).toEqual(expect.any(String))
   })
 })
