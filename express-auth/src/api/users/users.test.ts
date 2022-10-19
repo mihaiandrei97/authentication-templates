@@ -4,7 +4,7 @@ import { db } from '../../db'
 import * as bcrypt from 'bcrypt'
 import { generateAccessToken } from '../../utils/jwt'
 import { User } from '@prisma/client'
-describe('GET /api/v1/user/me', () => {
+describe('GET /api/v1/users/me', () => {
   const userCredentials = {
     email: 'mihai@me.com',
     password: 'Test1@123',
@@ -32,7 +32,7 @@ describe('GET /api/v1/user/me', () => {
   })
   it('responds with an error if token is missing', async () => {
     const response = await request(app)
-      .get('/api/v1/user/me')
+      .get('/api/v1/users/me')
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
 
@@ -41,7 +41,7 @@ describe('GET /api/v1/user/me', () => {
 
   it('responds with id and email', async () => {
     const response = await request(app)
-      .get('/api/v1/user/me')
+      .get('/api/v1/users/me')
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${validAccessToken}`)
       .expect('Content-Type', /json/)
