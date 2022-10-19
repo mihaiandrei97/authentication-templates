@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { requireUser } from '../../middlewares'
-import * as UserController from './user.controllers'
+import * as UserController from './users.controllers'
 
 const router = Router()
 

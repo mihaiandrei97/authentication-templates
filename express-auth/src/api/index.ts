@@ -1,7 +1,7 @@
 import express from 'express'
 import MessageResponse from '../interfaces/MessageResponse'
 import authRoutes from './auth/auth.routes'
-import userRoutes from './user/user.routes'
+import userRoutes from './users/users.routes'
 const router = express.Router()
 
 router.get<{}, MessageResponse>('/', (req, res) => {

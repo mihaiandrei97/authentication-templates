@@ -7,7 +7,7 @@ import {
   createUserByEmailAndPassword,
   findUserByEmail,
   findUserById,
-} from '../user/user.services'
+} from '../users/users.services'
 import {
   LoginInput,
   LoginQuerySchema,
