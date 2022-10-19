@@ -77,7 +77,7 @@ describe('POST /api/v1/auth/register', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.body).toHaveProperty('access_token')
-    expect(Array.isArray(response.headers['set-cookie']))
+    expect(Array.isArray(response.headers['set-cookie'])).toBe(true)
     expect(response.headers['set-cookie'][0]).toContain('refresh_token')
     expect(response.body.access_token).toEqual(expect.any(String))
   })
@@ -181,7 +181,7 @@ describe('POST /api/v1/auth/login', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.body).toHaveProperty('access_token')
-    expect(Array.isArray(response.headers['set-cookie']))
+    expect(Array.isArray(response.headers['set-cookie'])).toBe(true)
     expect(response.headers['set-cookie'][0]).toContain('refresh_token')
     expect(response.body.access_token).toEqual(expect.any(String))
   })
@@ -343,7 +343,7 @@ describe('POST /api/v1/auth/refreshToken', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.body).toHaveProperty('access_token')
-    expect(Array.isArray(response.headers['set-cookie']))
+    expect(Array.isArray(response.headers['set-cookie'])).toBe(true)
     expect(response.headers['set-cookie'][0]).toContain('refresh_token')
     expect(response.body.access_token).toEqual(expect.any(String))
   })
