@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt'
 import { generateRefreshToken } from '../../utils/jwt'
 import cuid from 'cuid'
 import { hashToken } from '../../utils/hashToken'
+import { globalUserCredentials } from '../../globalSetup'
 
 describe('POST /api/v1/auth/register', () => {
   it('responds with an error if payload is missing', async () => {
@@ -83,28 +84,6 @@ describe('POST /api/v1/auth/register', () => {
 })
 
 describe('POST /api/v1/auth/login', () => {
-  const userCredentials = {
-    email: 'mihai@login.com',
-    password: 'Test1@123',
-  }
-
-  beforeAll(async () => {
-    await db.user.create({
-      data: {
-        email: userCredentials.email,
-        password: bcrypt.hashSync(userCredentials.password, 12),
-      },
-    })
-  })
-
-  afterAll(async () => {
-    await db.user.delete({
-      where: {
-        email: userCredentials.email,
-      },
-    })
-  })
-
   it('responds with an error if payload is missing', async () => {
     const response = await request(app)
       .post('/api/v1/auth/login')
@@ -159,7 +138,7 @@ describe('POST /api/v1/auth/login', () => {
 
   it('responds with unauthorized if password is wrong', async () => {
     const payload = {
-      ...userCredentials,
+      ...globalUserCredentials,
       password: 'wrongPassw0rd',
     }
     const response = await request(app)
@@ -178,7 +157,10 @@ describe('POST /api/v1/auth/login', () => {
       .post('/api/v1/auth/login')
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .send(userCredentials)
+      .send({
+        email: globalUserCredentials.email,
+        password: globalUserCredentials.password,
+      })
 
     expect(response.statusCode).toBe(200)
     expect(response.body).toHaveProperty('access_token')
@@ -192,7 +174,10 @@ describe('POST /api/v1/auth/login', () => {
       .post('/api/v1/auth/login?refreshTokenInCookie=true')
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .send(userCredentials)
+      .send({
+        email: globalUserCredentials.email,
+        password: globalUserCredentials.password,
+      })
 
     expect(response.statusCode).toBe(200)
     expect(response.body).toHaveProperty('access_token')
@@ -220,11 +205,17 @@ describe('POST /api/v1/auth/refreshToken', () => {
       },
     })
 
-    expiredRefreshToken = generateRefreshToken(user, cuid(), '1s')
+    expiredRefreshToken = generateRefreshToken(
+      { userId: user.id, jti: cuid() },
+      '1s'
+    )
 
     const jti = cuid()
-    validRefreshToken = generateRefreshToken(user, jti, '5m')
-    refreshTokenNotPresentInDb = generateRefreshToken(user, cuid(), '5m')
+    validRefreshToken = generateRefreshToken({ userId: user.id, jti }, '5m')
+    refreshTokenNotPresentInDb = generateRefreshToken(
+      { userId: user.id, jti: cuid() },
+      '5m'
+    )
 
     await db.refreshToken.create({
       data: {

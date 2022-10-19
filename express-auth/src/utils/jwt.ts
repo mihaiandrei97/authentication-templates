@@ -2,12 +2,20 @@ import * as jwt from 'jsonwebtoken'
 import { User } from '@prisma/client'
 import { config } from './config'
 
+export interface IAccessTokenPayload {
+  userId: User['id']
+}
+export interface IRefreshTokenPayload {
+  userId: User['id']
+  jti: string
+}
+
 // Usually I keep the token between 5 minutes - 15 minutes
 export function generateAccessToken(
-  user: User,
+  payload: IAccessTokenPayload,
   expiresIn: string | number = config.jwt_access_lifetime
 ) {
-  return jwt.sign({ userId: user.id }, config.jwt_access_secret, {
+  return jwt.sign(payload, config.jwt_access_secret, {
     expiresIn,
   })
 }
@@ -17,25 +25,24 @@ export function generateAccessToken(
 // You can change this value depending on your app logic.
 // I would go for a maximum of 7 days, and make him login again after 7 days of inactivity.
 export function generateRefreshToken(
-  user: User,
-  jti: string,
+  payload: IRefreshTokenPayload,
   expiresIn: string | number = config.jwt_refresh_lifetime
 ) {
-  return jwt.sign(
-    {
-      userId: user.id,
-      jti,
-    },
-    config.jwt_refresh_secret,
-    {
-      expiresIn,
-    }
-  )
+  return jwt.sign(payload, config.jwt_refresh_secret, {
+    expiresIn,
+  })
 }
 
 export function generateTokens(user: User, jti: string) {
-  const accessToken = generateAccessToken(user)
-  const refreshToken = generateRefreshToken(user, jti)
+  const accessTokenPayload: IAccessTokenPayload = {
+    userId: user.id,
+  }
+  const refreshTokenPayload: IRefreshTokenPayload = {
+    jti: jti,
+    userId: user.id,
+  }
+  const accessToken = generateAccessToken(accessTokenPayload)
+  const refreshToken = generateRefreshToken(refreshTokenPayload)
 
   return {
     accessToken,
