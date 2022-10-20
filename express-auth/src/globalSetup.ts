@@ -8,8 +8,16 @@ export const globalUserCredentials = {
   password: 'Test1@123',
 }
 
+export const tasks = [
+  { content: 'Task1', favourite: false },
+  { content: 'Task2', favourite: true },
+  { content: 'Task3', favourite: false },
+]
+
 const setup = async () => {
   console.log('---------TESTS STARTED--------')
+
+  // user setup
   const user = await db.user.create({
     data: {
       id: globalUserCredentials.id,
@@ -19,6 +27,14 @@ const setup = async () => {
   })
   const validToken = generateAccessToken({ userId: user.id }, '15m')
   process.env.VALID_ACCESS_TOKEN_FOR_TESTING = validToken
+
+  // tasks setup
+  for (const task of tasks) {
+    await db.task.create({
+      // data: { ...task, user: { connect: { id: user.id } } },
+      data: { ...task, userId: user.id },
+    })
+  }
 }
 
 export default setup
