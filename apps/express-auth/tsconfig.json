@@ -9,7 +9,10 @@
     "noImplicitAny": true,
     "strict": true,
     "skipLibCheck": true,
-    "typeRoots": ["./typings", "./node_modules/@types"],
+    "baseUrl": "src",
+    // "typeRoots": ["./typings", "./node_modules/@types"],
+    "typeRoots": ["./typings"],
+    "types": ["express", "@types/jest"]
   },
   "include": [
     "./*.js",
