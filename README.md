@@ -6,7 +6,7 @@ Here you can find a list of auth templates that I made in order to use them on m
 
 ### For backend:
 
- - [ ] Express  <- Currently working on
+ - [X] Express  
  - [ ] NestJS
 
 ### Frontend
